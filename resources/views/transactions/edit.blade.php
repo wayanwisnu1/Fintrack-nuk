@@ -117,17 +117,27 @@
             const btnExpense = document.getElementById('btn-expense');
             const incCat = document.getElementById('income-categories');
             const expCat = document.getElementById('expense-categories');
+            const incSelect = document.getElementById('income-cat');
+            const expSelect = document.getElementById('expense-cat');
 
             if (type === 'income') {
                 btnIncome.className = 'btn btn-income';
                 btnExpense.className = 'btn btn-ghost';
                 incCat.style.display = '';
                 expCat.style.display = 'none';
+                
+                // Aktifkan name untuk income, matikan untuk expense
+                incSelect.setAttribute('name', 'category');
+                expSelect.removeAttribute('name');
             } else {
                 btnExpense.className = 'btn btn-expense';
                 btnIncome.className = 'btn btn-ghost';
                 expCat.style.display = '';
                 incCat.style.display = 'none';
+                
+                // Aktifkan name untuk expense, matikan untuk income
+                expSelect.setAttribute('name', 'category');
+                incSelect.removeAttribute('name');
             }
             [btnIncome, btnExpense].forEach(b => {
                 b.style.flex = '1';
