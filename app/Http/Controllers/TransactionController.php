@@ -6,9 +6,50 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use App\Exports\TransactionsExport;
+use App\Imports\TransactionsImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TransactionController extends Controller
 {
+    /**
+     * Export to Excel
+     */
+    public function exportExcel()
+    {
+        return Excel::download(new TransactionsExport, 'transaksi-fintrack-' . now()->format('Y-m-d') . '.xlsx');
+    }
+
+    /**
+     * Export to PDF
+     */
+    public function exportPdf()
+    {
+        $transactions = Transaction::orderBy('date', 'desc')->get();
+        
+        $pdf = Pdf::loadView('transactions.pdf', compact('transactions'));
+        
+        return $pdf->download('laporan-fintrack-' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * Import from Excel/CSV
+     */
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        try {
+            Excel::import(new TransactionsImport, $request->file('file'));
+            return back()->with('success', 'Data transaksi berhasil diimport!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal import data: ' . $e->getMessage());
+        }
+    }
+
     public function index(Request $request): View
     {
         $query = Transaction::query()->orderBy('date', 'desc');

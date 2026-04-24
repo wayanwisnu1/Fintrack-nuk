@@ -8,7 +8,40 @@
             <h1 class="page-title">Transaksi</h1>
             <p class="page-subtitle">{{ $transactions->total() }} transaksi ditemukan</p>
         </div>
-        <a href="{{ route('transactions.create') }}" class="btn btn-primary">＋ Tambah</a>
+        <div style="display: flex; gap: 8px;">
+            {{-- Tombol Export --}}
+            <div style="display: flex; gap: 4px; border: 1px solid var(--border); padding: 4px; border-radius: 8px;">
+                <a href="{{ route('transactions.export.excel') }}" class="btn btn-ghost btn-sm" title="Export ke Excel">
+                    📊 Excel
+                </a>
+                <a href="{{ route('transactions.export.pdf') }}" class="btn btn-ghost btn-sm" title="Export ke PDF">
+                    📄 PDF
+                </a>
+            </div>
+            
+            {{-- Tombol Import (Trigger Modal/Collapse) --}}
+            <button onclick="document.getElementById('import-form-container').style.display = 'block'" class="btn btn-ghost btn-sm">
+                📥 Import
+            </button>
+
+            <a href="{{ route('transactions.create') }}" class="btn btn-primary">＋ Tambah</a>
+        </div>
+    </div>
+
+    {{-- Form Import (Hidden by default) --}}
+    <div id="import-form-container" class="card" style="display: none; margin-bottom: 24px; border: 2px dashed var(--border);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="margin: 0; font-size: 14px;">Import Data Transaksi</h3>
+            <button onclick="document.getElementById('import-form-container').style.display = 'none'" class="btn btn-ghost btn-sm">×</button>
+        </div>
+        <form action="{{ route('transactions.import') }}" method="POST" enctype="multipart/form-data" style="display: flex; gap: 12px; align-items: center;">
+            @csrf
+            <input type="file" name="file" class="form-control" accept=".xlsx,.xls,.csv" required>
+            <button type="submit" class="btn btn-primary btn-sm">Upload & Proses</button>
+        </form>
+        <p style="font-size: 11px; color: var(--muted); margin-top: 8px;">
+            * Pastikan header kolom sesuai: <strong>judul, tipe, kategori, jumlah, tanggal, deskripsi</strong>.
+        </p>
     </div>
 
     <!-- Filter Bar -->
