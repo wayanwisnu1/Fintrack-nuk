@@ -80,42 +80,53 @@ class DashboardController extends Controller
 
     private function getWeeklyDailyData(): array
     {
-        $days = [];
+        $weeks = [];
         $dayNames = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
 
-        // Mulai dari Senin minggu ini
-        $startOfWeek = now()->startOfWeek(\Carbon\Carbon::MONDAY);
+        // Ambil 2 minggu terakhir (minggu ini dan minggu lalu)
+        for ($w = 0; $w <= 1; $w++) {
+            $days = [];
+            $startOfWeek = now()->subWeeks($w)->startOfWeek(\Carbon\Carbon::MONDAY);
 
-        for ($i = 0; $i < 7; $i++) {
-            $date = $startOfWeek->copy()->addDays($i);
-            $isToday = $date->isToday();
-            $isFuture = $date->isFuture() && !$isToday;
+            for ($i = 0; $i < 7; $i++) {
+                $date = $startOfWeek->copy()->addDays($i);
+                $isToday = $date->isToday();
+                $isFuture = $date->isFuture() && !$isToday;
 
-            $expense = Transaction::expense()
-                ->whereDate('date', $date->toDateString())
-                ->sum('amount');
+                $expense = Transaction::expense()
+                    ->whereDate('date', $date->toDateString())
+                    ->sum('amount');
 
-            $income = Transaction::income()
-                ->whereDate('date', $date->toDateString())
-                ->sum('amount');
+                $income = Transaction::income()
+                    ->whereDate('date', $date->toDateString())
+                    ->sum('amount');
 
-            // Ambil transaksi detail hari ini
-            $transactions = Transaction::whereDate('date', $date->toDateString())
-                ->orderBy('created_at', 'desc')
-                ->get();
+                // Ambil transaksi detail hari ini
+                $transactions = Transaction::whereDate('date', $date->toDateString())
+                    ->orderBy('created_at', 'desc')
+                    ->get();
 
-            $days[] = [
-                'label'        => $dayNames[$i],
-                'date'         => $date->format('d M'),
-                'full_date'    => $date->toDateString(),
-                'expense'      => (float) $expense,
-                'income'       => (float) $income,
-                'is_today'     => $isToday,
-                'is_future'    => $isFuture,
-                'transactions' => $transactions,
+                $days[] = [
+                    'label'        => $dayNames[$i],
+                    'date'         => $date->format('d M'),
+                    'full_date'    => $date->toDateString(),
+                    'expense'      => (float) $expense,
+                    'income'       => (float) $income,
+                    'is_today'     => $isToday,
+                    'is_future'    => $isFuture,
+                    'transactions' => $transactions,
+                ];
+            }
+
+            $weeks[] = [
+                'week_label'    => $w === 0 ? 'Minggu Ini' : 'Minggu Lalu',
+                'range'         => $startOfWeek->format('d M') . ' – ' . $startOfWeek->copy()->endOfWeek(\Carbon\Carbon::SUNDAY)->format('d M Y'),
+                'days'          => $days,
+                'total_expense' => collect($days)->sum('expense'),
+                'is_current'    => $w === 0,
             ];
         }
 
-        return $days;
+        return $weeks;
     }
 }

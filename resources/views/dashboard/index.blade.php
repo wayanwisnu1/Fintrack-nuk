@@ -8,9 +8,12 @@
             <h1 class="page-title">Dashboard</h1>
             <p class="page-subtitle">Ringkasan keuanganmu — {{ now()->translatedFormat('F Y') }}</p>
         </div>
-        <a href="{{ route('transactions.create') }}" class="btn btn-primary">
-            ＋ Tambah Transaksi
-        </a>
+        <div style="display: flex; align-items: center; gap: 12px; background: var(--surface); padding: 8px 16px; border-radius: 12px; border: 1px solid var(--border);">
+            <div style="width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #fff;">
+                {{ substr(auth()->user()->name, 0, 1) }}
+            </div>
+            <div style="font-weight: 600; font-size: 14px; color: var(--text);">{{ auth()->user()->name }}</div>
+        </div>
     </div>
 
     <!-- Stats Cards -->
@@ -74,144 +77,141 @@
         </div>
     </div>
 
-    <!-- Pengeluaran Harian Minggu Ini -->
-    <div class="card" style="margin-bottom: 24px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-            <div>
-                <div style="font-family: var(--font-head); font-size: 16px; font-weight: 700;">📅 Pengeluaran Harian —
-                    Minggu Ini</div>
-                <div style="font-size: 12px; color: var(--muted); margin-top: 3px;">
-                    {{ now()->startOfWeek(\Carbon\Carbon::MONDAY)->format('d M') }} –
-                    {{ now()->endOfWeek(\Carbon\Carbon::SUNDAY)->format('d M Y') }}
-                </div>
-            </div>
-            <div style="font-size: 13px; color: var(--muted);">
-                Total: <span style="color: var(--expense); font-weight: 600;">
-                    Rp {{ number_format(collect($weeklyData)->sum('expense'), 0, ',', '.') }}
-                </span>
+    <!-- Pengeluaran Harian -->
+    <div class="card" style="margin-bottom: 24px; padding: 20px 0;">
+        <div style="padding: 0 20px 15px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="font-family: var(--font-head); font-size: 16px; font-weight: 700;">📅 Pengeluaran Harian</div>
+            <div style="font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: center;">
+                <span style="display: inline-block; width: 12px; height: 4px; background: var(--border); border-radius: 2px;"></span>
+                Geser untuk minggu lalu
             </div>
         </div>
 
-        <!-- Bar visual harian -->
-        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 24px;">
-            @php $maxExpense = collect($weeklyData)->max('expense') ?: 1; @endphp
-            @foreach ($weeklyData as $day)
-                <div style="text-align: center;" onclick="showDayDetail('{{ $day['full_date'] }}')"
-                    style="cursor:pointer;">
-                    {{-- Label hari --}}
-                    <div
-                        style="font-size: 11px; font-weight: 600; color: {{ $day['is_today'] ? 'var(--accent)' : 'var(--muted)' }}; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
-                        {{ $day['label'] }}
-                    </div>
-
-                    {{-- Bar container --}}
-                    <div
-                        style="height: 80px; display: flex; align-items: flex-end; justify-content: center; position: relative;">
-                        @if ($day['is_future'])
-                            <div
-                                style="width: 100%; height: 4px; background: var(--border); border-radius: 4px; position: absolute; bottom: 0;">
-                            </div>
-                        @else
-                            @php
-                                $pct = $maxExpense > 0 ? ($day['expense'] / $maxExpense) * 100 : 0;
-                                $barH = max($pct * 0.8, $day['expense'] > 0 ? 6 : 2);
-                            @endphp
-                            <div style="
-                        width: 100%;
-                        height: {{ $barH }}px;
-                        background: {{ $day['is_today'] ? 'var(--accent)' : ($day['expense'] > 0 ? 'rgba(255,87,87,0.7)' : 'var(--border)') }};
-                        border-radius: 6px 6px 0 0;
-                        transition: all 0.3s;
-                        cursor: pointer;
-                        position: absolute;
-                        bottom: 0;
-                    "
-                                title="Rp {{ number_format($day['expense'], 0, ',', '.') }}"></div>
-                        @endif
-                    </div>
-
-                    {{-- Tanggal --}}
-                    <div
-                        style="
-                font-size: 13px;
-                font-weight: {{ $day['is_today'] ? '700' : '400' }};
-                color: {{ $day['is_today'] ? 'var(--text)' : 'var(--muted)' }};
-                margin-top: 6px;
-                background: {{ $day['is_today'] ? 'var(--accent)' : 'transparent' }};
-                border-radius: 50%;
-                width: 28px; height: 28px;
-                display: flex; align-items: center; justify-content: center;
-                margin: 6px auto 0;
-            ">
-                        {{ \Carbon\Carbon::parse($day['full_date'])->format('d') }}
-                    </div>
-
-                    {{-- Jumlah --}}
-                    @if (!$day['is_future'])
-                        <div
-                            style="font-size: 10px; color: {{ $day['expense'] > 0 ? 'var(--expense)' : 'var(--muted)' }}; margin-top: 4px; font-weight: 500;">
-                            @if ($day['expense'] > 0)
-                                Rp {{ number_format($day['expense'] / 1000, 0, ',', '.') }}rb
-                            @else
-                                —
-                            @endif
+        <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; padding-bottom: 10px;">
+            @php
+                $allDays = collect($weeklyData)->pluck('days')->flatten(1);
+                $maxExpense = $allDays->max('expense') ?: 1;
+            @endphp
+            @foreach ($weeklyData as $week)
+                <div style="flex: 0 0 100%; scroll-snap-align: start; padding: 0 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                        <div>
+                            <div style="font-size: 14px; font-weight: 700; color: var(--text);">{{ $week['week_label'] }}</div>
+                            <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">{{ $week['range'] }}</div>
                         </div>
-                    @endif
+                        <div style="font-size: 13px; color: var(--muted);">
+                            Total: <span style="color: var(--expense); font-weight: 600;">
+                                Rp {{ number_format($week['total_expense'], 0, ',', '.') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Bar visual harian -->
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 10px;">
+                        @foreach ($week['days'] as $day)
+                            <div style="text-align: center; cursor: pointer;" onclick="showDayDetail('{{ $day['full_date'] }}')">
+                                {{-- Label hari --}}
+                                <div style="font-size: 10px; font-weight: 600; color: {{ $day['is_today'] ? 'var(--accent)' : 'var(--muted)' }}; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    {{ $day['label'] }}
+                                </div>
+
+                                {{-- Bar container --}}
+                                <div style="height: 60px; display: flex; align-items: flex-end; justify-content: center; position: relative;">
+                                    @if ($day['is_future'])
+                                        <div style="width: 100%; height: 4px; background: var(--border); border-radius: 4px; position: absolute; bottom: 0;"></div>
+                                    @else
+                                        @php
+                                            $pct = $maxExpense > 0 ? ($day['expense'] / $maxExpense) * 100 : 0;
+                                            $barH = max($pct * 0.6, $day['expense'] > 0 ? 6 : 2);
+                                        @endphp
+                                        <div style="
+                                            width: 100%;
+                                            height: {{ $barH }}px;
+                                            background: {{ $day['is_today'] ? 'var(--accent)' : ($day['expense'] > 0 ? 'rgba(255,87,87,0.7)' : 'var(--border)') }};
+                                            border-radius: 4px 4px 0 0;
+                                            transition: all 0.3s;
+                                            position: absolute;
+                                            bottom: 0;
+                                        " title="Rp {{ number_format($day['expense'], 0, ',', '.') }}"></div>
+                                    @endif
+                                </div>
+
+                                {{-- Tanggal --}}
+                                <div style="
+                                    font-size: 12px;
+                                    font-weight: {{ $day['is_today'] ? '700' : '400' }};
+                                    color: {{ $day['is_today'] ? 'var(--text)' : 'var(--muted)' }};
+                                    margin-top: 6px;
+                                    background: {{ $day['is_today'] ? 'var(--accent)' : 'transparent' }};
+                                    border-radius: 50%;
+                                    width: 24px; height: 24px;
+                                    display: flex; align-items: center; justify-content: center;
+                                    margin: 6px auto 0;
+                                ">
+                                    {{ \Carbon\Carbon::parse($day['full_date'])->format('d') }}
+                                </div>
+
+                                {{-- Jumlah --}}
+                                @if (!$day['is_future'])
+                                    <div style="font-size: 9px; color: {{ $day['expense'] > 0 ? 'var(--expense)' : 'var(--muted)' }}; margin-top: 4px; font-weight: 500;">
+                                        @if ($day['expense'] > 0)
+                                            {{ number_format($day['expense'] / 1000, 0, ',', '.') }}rb
+                                        @else
+                                            —
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             @endforeach
         </div>
 
         {{-- Detail per hari (collapsible) --}}
-        <div id="day-detail-container">
-            @foreach ($weeklyData as $day)
-                <div id="day-{{ $day['full_date'] }}" class="day-detail" style="display: none;">
-                    <div style="border-top: 1px solid var(--border); padding-top: 16px;">
-                        <div
-                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                            <div style="font-weight: 600; font-size: 14px;">
-                                {{ $day['label'] }}, {{ \Carbon\Carbon::parse($day['full_date'])->format('d M Y') }}
-                                @if ($day['is_today'])
-                                    <span class="badge"
-                                        style="background: rgba(108,141,250,0.15); color: var(--accent); margin-left: 6px;">Hari
-                                        ini</span>
-                                @endif
+        <div id="day-detail-container" style="padding: 0 20px;">
+            @foreach ($weeklyData as $week)
+                @foreach ($week['days'] as $day)
+                    <div id="day-{{ $day['full_date'] }}" class="day-detail" style="display: none;">
+                        <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 10px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                <div style="font-weight: 600; font-size: 14px;">
+                                    {{ $day['label'] }}, {{ \Carbon\Carbon::parse($day['full_date'])->format('d M Y') }}
+                                    @if ($day['is_today'])
+                                        <span class="badge" style="background: rgba(108,141,250,0.15); color: var(--accent); margin-left: 6px;">Hari ini</span>
+                                    @endif
+                                </div>
+                                <div style="display: flex; gap: 16px; font-size: 13px;">
+                                    <span>Masuk: <strong style="color: var(--income);">Rp {{ number_format($day['income'], 0, ',', '.') }}</strong></span>
+                                    <span>Keluar: <strong style="color: var(--expense);">Rp {{ number_format($day['expense'], 0, ',', '.') }}</strong></span>
+                                </div>
                             </div>
-                            <div style="display: flex; gap: 16px; font-size: 13px;">
-                                <span>Masuk: <strong style="color: var(--income);">Rp
-                                        {{ number_format($day['income'], 0, ',', '.') }}</strong></span>
-                                <span>Keluar: <strong style="color: var(--expense);">Rp
-                                        {{ number_format($day['expense'], 0, ',', '.') }}</strong></span>
-                            </div>
-                        </div>
 
-                        @if ($day['transactions']->isEmpty())
-                            <div style="text-align: center; color: var(--muted); padding: 16px 0; font-size: 13px;">
-                                Tidak ada transaksi hari ini
-                            </div>
-                        @else
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                                @foreach ($day['transactions'] as $t)
-                                    <div
-                                        style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border);">
-                                        <div style="display: flex; align-items: center; gap: 10px;">
-                                            <div
-                                                style="width: 8px; height: 8px; border-radius: 50%; background: {{ $t->type === 'income' ? 'var(--income)' : 'var(--expense)' }};">
-                                            </div>
-                                            <div>
-                                                <div style="font-size: 13px; font-weight: 500;">{{ $t->title }}</div>
-                                                <div style="font-size: 11px; color: var(--muted);">{{ $t->category }}
+                            @if ($day['transactions']->isEmpty())
+                                <div style="text-align: center; color: var(--muted); padding: 16px 0; font-size: 13px;">
+                                    Tidak ada transaksi hari ini
+                                </div>
+                            @else
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    @foreach ($day['transactions'] as $t)
+                                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border);">
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <div style="width: 8px; height: 8px; border-radius: 50%; background: {{ $t->type === 'income' ? 'var(--income)' : 'var(--expense)' }};"></div>
+                                                <div>
+                                                    <div style="font-size: 13px; font-weight: 500;">{{ $t->title }}</div>
+                                                    <div style="font-size: 11px; color: var(--muted);">{{ $t->category }}</div>
                                                 </div>
                                             </div>
+                                            <div class="amount-{{ $t->type }}" style="font-size: 13px;">
+                                                {{ $t->type === 'income' ? '+' : '-' }}{{ $t->formatted_amount }}
+                                            </div>
                                         </div>
-                                        <div class="amount-{{ $t->type }}" style="font-size: 13px;">
-                                            {{ $t->type === 'income' ? '+' : '-' }}{{ $t->formatted_amount }}
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                </div>
+                @endforeach
             @endforeach
         </div>
     </div>

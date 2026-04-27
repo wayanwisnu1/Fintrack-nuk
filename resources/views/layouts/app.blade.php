@@ -448,6 +448,21 @@
             transition: all 0.2s;
         }
 
+        .pagination li a svg,
+        .pagination li span svg,
+        nav svg {
+            width: 14px !important;
+            height: 14px !important;
+        }
+
+        /* Jika menggunakan default tailwind pagination */
+        .flex.justify-between.flex-1.sm\:hidden svg,
+        nav[role="navigation"] svg {
+            width: 14px !important;
+            height: 14px !important;
+            display: inline-block;
+        }
+
         .pagination li.active span {
             background: var(--accent);
             color: #fff;
@@ -481,6 +496,7 @@
 </head>
 
 <body>
+    @auth
     <!-- Sidebar -->
     <aside class="sidebar">
         <a href="{{ route('dashboard') }}" class="logo">
@@ -548,6 +564,8 @@
             Target Keuangan
         </a>
 
+        <div class="nav-divider"></div>
+
         <a href="{{ route('transactions.create') }}?type=income" class="nav-link">
             <span class="nav-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -570,13 +588,29 @@
             Tambah Pengeluaran
         </a>
 
+        <div class="nav-divider"></div>
+
+        <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display: none;">
+            @csrf
+        </form>
+        <a href="#" class="nav-link" style="color: var(--expense);" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <span class="nav-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </span>
+            Logout
+        </a>
+
         <div class="sidebar-footer">
+            User: {{ auth()->user()->name }}<br>
             FinTrack v1.0 · {{ now()->format('Y') }}
         </div>
     </aside>
 
     <!-- Main Content -->
     <main class="main">
+    @else
+    <main class="main" style="margin-left: 0;">
+    @endauth
         @if (session('success'))
             <script>
                 Swal.fire({
