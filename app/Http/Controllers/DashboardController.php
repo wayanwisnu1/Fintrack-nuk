@@ -7,7 +7,7 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(): View
+    public function index(\Illuminate\Http\Request $request): View
     {
         // Summary totals
         $totalIncome  = Transaction::income()->sum('amount');
@@ -34,8 +34,12 @@ class DashboardController extends Controller
             ->groupBy('category')
             ->get();
 
-        // Pengeluaran & pemasukan per hari dalam minggu ini (Senin - Minggu)
-        $weeklyData = $this->getWeeklyDailyData();
+        // Pengeluaran & pemasukan per hari dalam beberapa minggu terakhir
+        $weeksToDisplay = (int) $request->query('weeks', 2);
+        if ($weeksToDisplay < 1) $weeksToDisplay = 2;
+        if ($weeksToDisplay > 12) $weeksToDisplay = 12; // Limit to 3 months max for performance
+
+        $weeklyData = $this->getWeeklyDailyData($weeksToDisplay);
 
         return view('dashboard.index', compact(
             'totalIncome',
@@ -46,7 +50,8 @@ class DashboardController extends Controller
             'recentTransactions',
             'chartData',
             'expenseByCategory',
-            'weeklyData'
+            'weeklyData',
+            'weeksToDisplay'
         ));
     }
 
@@ -78,13 +83,13 @@ class DashboardController extends Controller
         return $months->toArray();
     }
 
-    private function getWeeklyDailyData(): array
+    private function getWeeklyDailyData(int $weeksCount = 2): array
     {
         $weeks = [];
         $dayNames = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
 
-        // Ambil 2 minggu terakhir (minggu ini dan minggu lalu)
-        for ($w = 0; $w <= 1; $w++) {
+        // Ambil beberapa minggu terakhir
+        for ($w = 0; $w < $weeksCount; $w++) {
             $days = [];
             $startOfWeek = now()->subWeeks($w)->startOfWeek(\Carbon\Carbon::MONDAY);
 
@@ -118,8 +123,12 @@ class DashboardController extends Controller
                 ];
             }
 
+            $label = 'Minggu Ini';
+            if ($w === 1) $label = 'Minggu Lalu';
+            if ($w > 1) $label = $w . ' Minggu Lalu';
+
             $weeks[] = [
-                'week_label'    => $w === 0 ? 'Minggu Ini' : 'Minggu Lalu',
+                'week_label'    => $label,
                 'range'         => $startOfWeek->format('d M') . ' – ' . $startOfWeek->copy()->endOfWeek(\Carbon\Carbon::SUNDAY)->format('d M Y'),
                 'days'          => $days,
                 'total_expense' => collect($days)->sum('expense'),
