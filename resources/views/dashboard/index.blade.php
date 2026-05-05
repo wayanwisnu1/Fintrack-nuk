@@ -20,41 +20,49 @@
 
     <!-- Stats Cards -->
     <div class="grid-3" style="margin-bottom: 24px;">
-        <div class="card" style="border-color: rgba(108,141,250,0.3);">
-            <div
-                style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px;">
-                Total Saldo</div>
-            <div
-                style="font-family: var(--font-head); font-size: 26px; font-weight: 800; color: {{ $balance >= 0 ? 'var(--income)' : 'var(--expense)' }};">
+        <div class="card" style="border-color: rgba(108,141,250,0.3); display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <div style="font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="wallet" style="width: 14px; height: 14px; color: var(--accent);"></i> Total Saldo
+                </div>
+            </div>
+            <div style="font-family: var(--font-head); font-size: 24px; font-weight: 800; color: {{ $balance >= 0 ? 'var(--income)' : 'var(--expense)' }};">
                 {{ $balance >= 0 ? '' : '-' }}Rp {{ number_format(abs($balance), 0, ',', '.') }}
             </div>
-            <div style="font-size: 12px; color: var(--muted); margin-top: 6px;">Saldo keseluruhan</div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">Saldo keseluruhan</div>
         </div>
 
-        <div class="card" style="border-color: rgba(34,212,124,0.3);">
-            <div
-                style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                <i data-lucide="trending-up" style="width: 14px; height: 14px; color: var(--income);"></i> Total Pemasukan</div>
-            <div style="font-family: var(--font-head); font-size: 26px; font-weight: 800; color: var(--income);">
+        <div class="card" style="border-color: rgba(34,212,124,0.3); display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <div style="font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="trending-up" style="width: 14px; height: 14px; color: var(--income);"></i> Total Pemasukan
+                </div>
+            </div>
+            <div style="font-family: var(--font-head); font-size: 24px; font-weight: 800; color: var(--income);">
                 Rp {{ number_format($totalIncome, 0, ',', '.') }}
             </div>
-            <div style="font-size: 12px; color: var(--muted); margin-top: 6px;">Bulan ini: Rp
-                {{ number_format($monthIncome, 0, ',', '.') }}</div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">Bulan ini: Rp {{ number_format($monthIncome, 0, ',', '.') }}</div>
         </div>
 
-        <div class="card" style="border-color: rgba(255,87,87,0.3);">
-            <div
-                style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                <i data-lucide="trending-down" style="width: 14px; height: 14px; color: var(--expense);"></i> Total Pengeluaran</div>
-            <div style="font-family: var(--font-head); font-size: 26px; font-weight: 800; color: var(--expense);">
+        <div class="card" style="border-color: rgba(255,87,87,0.3); display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <div style="font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="trending-down" style="width: 14px; height: 14px; color: var(--expense);"></i> Total Pengeluaran
+                </div>
+            </div>
+            <div style="font-family: var(--font-head); font-size: 24px; font-weight: 800; color: var(--expense);">
                 Rp {{ number_format($totalExpense, 0, ',', '.') }}
             </div>
-            <div style="font-size: 12px; color: var(--muted); margin-top: 6px;">Bulan ini: Rp
-                {{ number_format($monthExpense, 0, ',', '.') }}</div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">Bulan ini: Rp {{ number_format($monthExpense, 0, ',', '.') }}</div>
         </div>
     </div>
 
-    @include('components.forecasting-card')
+    {{-- Smart Insights & Health Score Section --}}
+    <div style="margin-bottom: 24px;">
+        @include('components.health-score-card')
+        @include('components.forecasting-card')
+        @include('components.insight-cards')
+    </div>
 
     <!-- Charts -->
     <div class="grid-2" style="margin-bottom: 24px;">
@@ -79,10 +87,10 @@
                 <canvas id="donutChart" height="200"></canvas>
             @endif
         </div>
-        </div>
+    </div>
 
-        <!-- Pengeluaran Harian -->
-        <div class="card" style="margin-bottom: 24px; padding: 20px 0;">
+    <!-- Pengeluaran Harian -->
+    <div class="card" style="margin-bottom: 24px; padding: 20px 0;">
         <div style="padding: 0 20px 15px; display: flex; align-items: center; justify-content: space-between;">
             <div style="font-family: var(--font-head); font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
                 <i data-lucide="calendar" style="width: 18px; height: 18px; color: var(--accent);"></i> Pengeluaran Harian

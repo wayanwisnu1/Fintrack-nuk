@@ -45,7 +45,8 @@ class ForecastingService
                 'message' => 'Saldo Anda sudah habis atau negatif.',
                 'days_remaining' => 0,
                 'forecast_date' => null,
-                'daily_average' => $averageDailyExpense
+                'daily_average' => $averageDailyExpense,
+                'current_balance' => $currentBalance
             ];
         }
 
@@ -55,7 +56,8 @@ class ForecastingService
                 'message' => 'Tidak ada pengeluaran terdeteksi dalam 3 bulan terakhir.',
                 'days_remaining' => 999, // Infinite
                 'forecast_date' => null,
-                'daily_average' => 0
+                'daily_average' => 0,
+                'current_balance' => $currentBalance
             ];
         }
 
