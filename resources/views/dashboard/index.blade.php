@@ -33,8 +33,8 @@
 
         <div class="card" style="border-color: rgba(34,212,124,0.3);">
             <div
-                style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px;">
-                📈 Total Pemasukan</div>
+                style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="trending-up" style="width: 14px; height: 14px; color: var(--income);"></i> Total Pemasukan</div>
             <div style="font-family: var(--font-head); font-size: 26px; font-weight: 800; color: var(--income);">
                 Rp {{ number_format($totalIncome, 0, ',', '.') }}
             </div>
@@ -44,30 +44,30 @@
 
         <div class="card" style="border-color: rgba(255,87,87,0.3);">
             <div
-                style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px;">
-                📉 Total Pengeluaran</div>
+                style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="trending-down" style="width: 14px; height: 14px; color: var(--expense);"></i> Total Pengeluaran</div>
             <div style="font-family: var(--font-head); font-size: 26px; font-weight: 800; color: var(--expense);">
                 Rp {{ number_format($totalExpense, 0, ',', '.') }}
             </div>
             <div style="font-size: 12px; color: var(--muted); margin-top: 6px;">Bulan ini: Rp
                 {{ number_format($monthExpense, 0, ',', '.') }}</div>
         </div>
-    </div>
+        </div>
 
-    <!-- Charts -->
-    <div class="grid-2" style="margin-bottom: 24px;">
+        <!-- Charts -->
+        <div class="grid-2" style="margin-bottom: 24px;">
         <!-- Bar Chart -->
         <div class="card">
-            <div style="font-family: var(--font-head); font-size: 16px; font-weight: 700; margin-bottom: 20px;">
-                📊 Tren 6 Bulan Terakhir
+            <div style="font-family: var(--font-head); font-size: 16px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="bar-chart-3" style="width: 18px; height: 18px; color: var(--accent);"></i> Tren 6 Bulan Terakhir
             </div>
             <canvas id="barChart" height="200"></canvas>
         </div>
 
         <!-- Expense Donut -->
         <div class="card">
-            <div style="font-family: var(--font-head); font-size: 16px; font-weight: 700; margin-bottom: 20px;">
-                🥧 Pengeluaran Bulan Ini
+            <div style="font-family: var(--font-head); font-size: 16px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="pie-chart" style="width: 18px; height: 18px; color: var(--accent2);"></i> Pengeluaran Bulan Ini
             </div>
             @if ($expenseByCategory->isEmpty())
                 <div style="text-align:center; color: var(--muted); padding: 40px 0;">
@@ -77,15 +77,17 @@
                 <canvas id="donutChart" height="200"></canvas>
             @endif
         </div>
-    </div>
+        </div>
 
-    <!-- Pengeluaran Harian -->
-    <div class="card" style="margin-bottom: 24px; padding: 20px 0;">
+        <!-- Pengeluaran Harian -->
+        <div class="card" style="margin-bottom: 24px; padding: 20px 0;">
         <div style="padding: 0 20px 15px; display: flex; align-items: center; justify-content: space-between;">
-            <div style="font-family: var(--font-head); font-size: 16px; font-weight: 700;">📅 Pengeluaran Harian</div>
+            <div style="font-family: var(--font-head); font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="calendar" style="width: 18px; height: 18px; color: var(--accent);"></i> Pengeluaran Harian
+            </div>
             <div style="display: flex; align-items: center; gap: 12px;">
                 <form action="{{ route('dashboard') }}" method="GET" style="margin: 0;">
-                    <select name="weeks" onchange="this.form.submit()"
+                    <select name="weeks" onchange="this.form.submit()" 
                         style="font-size: 12px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; cursor: pointer; outline: none;">
                         <option value="2" {{ $weeksToDisplay == 2 ? 'selected' : '' }}>2 Minggu Terakhir</option>
                         <option value="4" {{ $weeksToDisplay == 4 ? 'selected' : '' }}>4 Minggu Terakhir</option>
@@ -93,10 +95,8 @@
                         <option value="12" {{ $weeksToDisplay == 12 ? 'selected' : '' }}>12 Minggu Terakhir</option>
                     </select>
                 </form>
-                <div
-                    style="font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: center; border-left: 1px solid var(--border); padding-left: 12px;">
-                    <span
-                        style="display: inline-block; width: 12px; height: 4px; background: var(--accent); border-radius: 2px; opacity: 0.5;"></span>
+                <div style="font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: center; border-left: 1px solid var(--border); padding-left: 12px;">
+                    <span style="display: inline-block; width: 12px; height: 4px; background: var(--accent); border-radius: 2px; opacity: 0.5;"></span>
                     Geser
                 </div>
             </div>
@@ -254,8 +254,12 @@
     <!-- Recent Transactions -->
     <div class="card">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-            <div style="font-family: var(--font-head); font-size: 16px; font-weight: 700;">🕐 Transaksi Terbaru</div>
-            <a href="{{ route('transactions.index') }}" class="btn btn-ghost btn-sm">Lihat Semua →</a>
+            <div style="font-family: var(--font-head); font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="history" style="width: 18px; height: 18px; color: var(--accent);"></i> Transaksi Terbaru
+            </div>
+            <a href="{{ route('transactions.index') }}" class="btn btn-ghost btn-sm">
+                Lihat Semua <i data-lucide="chevron-right" style="width: 14px; height: 14px; margin-left: 4px;"></i>
+            </a>
         </div>
 
         @if ($recentTransactions->isEmpty())
@@ -289,7 +293,11 @@
                                 <td style="color: var(--muted);">{{ $t->date->format('d M Y') }}</td>
                                 <td>
                                     <span class="badge badge-{{ $t->type }}">
-                                        {{ $t->type === 'income' ? '↑ Pemasukan' : '↓ Pengeluaran' }}
+                                        @if($t->type === 'income')
+                                            <i data-lucide="arrow-up-circle" style="width: 12px; height: 12px; margin-right: 4px;"></i> Pemasukan
+                                        @else
+                                            <i data-lucide="arrow-down-circle" style="width: 12px; height: 12px; margin-right: 4px;"></i> Pengeluaran
+                                        @endif
                                     </span>
                                 </td>
                                 <td style="text-align:right;" class="amount-{{ $t->type }}">
@@ -306,6 +314,9 @@
 
 @push('scripts')
     <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
         const chartData = @json($chartData);
         const labels = chartData.map(d => d.label);
         const incomes = chartData.map(d => d.income);

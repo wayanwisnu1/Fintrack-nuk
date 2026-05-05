@@ -8,7 +8,9 @@
             <h1 class="page-title">Tambah Transaksi</h1>
             <p class="page-subtitle">Catat pemasukan atau pengeluaranmu</p>
         </div>
-        <a href="{{ route('transactions.index') }}" class="btn btn-ghost">← Kembali</a>
+        <a href="{{ route('transactions.index') }}" class="btn btn-ghost">
+            <i data-lucide="arrow-left" style="width: 16px; height: 16px; margin-right: 6px;"></i> Kembali
+        </a>
     </div>
 
     <div style="display: grid; grid-template-columns: 640px 1fr; gap: 28px; align-items: start;">
@@ -17,13 +19,13 @@
             <div style="display: flex; gap: 10px; margin-bottom: 28px;">
                 <button type="button" id="btn-income"
                     class="btn {{ old('type', request('type', 'income')) === 'income' ? 'btn-income' : 'btn-ghost' }}"
-                    style="flex: 1; justify-content: center;" onclick="setType('income')">
-                    ↑ Pemasukan
+                    style="flex: 1; justify-content: center; display: flex; align-items: center; gap: 8px;" onclick="setType('income')">
+                    <i data-lucide="arrow-up-circle" style="width: 18px; height: 18px;"></i> Pemasukan
                 </button>
                 <button type="button" id="btn-expense"
                     class="btn {{ old('type', request('type')) === 'expense' ? 'btn-expense' : 'btn-ghost' }}"
-                    style="flex: 1; justify-content: center;" onclick="setType('expense')">
-                    ↓ Pengeluaran
+                    style="flex: 1; justify-content: center; display: flex; align-items: center; gap: 8px;" onclick="setType('expense')">
+                    <i data-lucide="arrow-down-circle" style="width: 18px; height: 18px;"></i> Pengeluaran
                 </button>
             </div>
 
@@ -90,8 +92,8 @@
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-top: 8px;">
-                    <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">
-                        💾 Simpan Transaksi
+                    <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="save" style="width: 18px; height: 18px;"></i> Simpan Transaksi
                     </button>
                     <a href="{{ route('transactions.index') }}" class="btn btn-ghost">Batal</a>
                 </div>
@@ -103,8 +105,9 @@
             <!-- Quote utama -->
             <div class="card"
                 style="margin-bottom: 16px; border-color: rgba(108,141,250,0.25); position: relative; overflow: hidden;">
-                <div style="position: absolute; top: -20px; right: -10px; font-size: 80px; opacity: 0.05; line-height: 1;">
-                    💬</div>
+                <div style="position: absolute; top: 10px; right: 10px; opacity: 0.1;">
+                    <i data-lucide="quote" style="width: 60px; height: 60px;"></i>
+                </div>
                 <div
                     style="font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px;">
                     ✦ Motivasi Hari Ini</div>
@@ -114,9 +117,9 @@
                 </div>
                 <div id="quote-author" style="font-size: 12px; color: var(--muted); font-style: italic;">— FinTrack</div>
                 <button onclick="gantiQuote()"
-                    style="margin-top: 16px; background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 12px; padding: 6px 12px; cursor: pointer; transition: all 0.2s;"
+                    style="margin-top: 16px; background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 12px; padding: 6px 12px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;"
                     onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">
-                    🔄 Ganti Quote
+                    <i data-lucide="refresh-cw" style="width: 12px; height: 12px;"></i> Ganti Quote
                 </button>
                 <!-- Progress bar countdown 30 detik -->
                 <div style="margin-top: 14px;">
@@ -140,17 +143,17 @@
                     💡 Tips Keuangan</div>
                 <div style="display: flex; flex-direction: column; gap: 12px;" id="tips-list">
                     <div style="display: flex; gap: 10px; align-items: flex-start;">
-                        <span style="font-size: 16px; flex-shrink: 0;">🎯</span>
+                        <i data-lucide="target" style="width: 18px; height: 18px; color: var(--income); flex-shrink: 0;"></i>
                         <div style="font-size: 13px; color: var(--text); line-height: 1.5;">Terapkan aturan
                             <strong>50/30/20</strong> — 50% kebutuhan, 30% keinginan, 20% tabungan.</div>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: flex-start;">
-                        <span style="font-size: 16px; flex-shrink: 0;">📊</span>
+                        <i data-lucide="pie-chart" style="width: 18px; height: 18px; color: var(--income); flex-shrink: 0;"></i>
                         <div style="font-size: 13px; color: var(--text); line-height: 1.5;">Catat <strong>setiap
                                 pengeluaran</strong>, sekecil apapun. Kopi 15rb sehari = 450rb sebulan!</div>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: flex-start;">
-                        <span style="font-size: 16px; flex-shrink: 0;">🚀</span>
+                        <i data-lucide="rocket" style="width: 18px; height: 18px; color: var(--income); flex-shrink: 0;"></i>
                         <div style="font-size: 13px; color: var(--text); line-height: 1.5;">Bayar dirimu sendiri dulu —
                             <strong>sisihkan tabungan</strong> sebelum belanja yang lain.</div>
                     </div>
@@ -160,8 +163,9 @@
             <!-- Statistik mini -->
             <div class="card" style="border-color: rgba(247,183,49,0.2);">
                 <div
-                    style="font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent2); margin-bottom: 14px;">
-                    📈 Fakta Menarik</div>
+                    style="font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent2); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i> Fakta Menarik
+                </div>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <div
                         style="background: var(--bg); border-radius: 8px; padding: 12px; border: 1px solid var(--border);">
@@ -170,7 +174,7 @@
                         <div
                             style="font-family: var(--font-head); font-size: 18px; font-weight: 800; color: var(--income);">
                             Rp 3.650.000</div>
-                        <div style="font-size: 11px; color: var(--muted);">terkumpul dalam setahun 🎉</div>
+                        <div style="font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px;">terkumpul dalam setahun <i data-lucide="party-popper" style="width: 12px; height: 12px;"></i></div>
                     </div>
                     <div
                         style="background: var(--bg); border-radius: 8px; padding: 12px; border: 1px solid var(--border);">
@@ -179,7 +183,7 @@
                         <div
                             style="font-family: var(--font-head); font-size: 18px; font-weight: 800; color: var(--income);">
                             Rp 18.250.000</div>
-                        <div style="font-size: 11px; color: var(--muted);">terkumpul dalam setahun 🚀</div>
+                        <div style="font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px;">terkumpul dalam setahun <i data-lucide="rocket" style="width: 12px; height: 12px;"></i></div>
                     </div>
                 </div>
             </div>
@@ -190,6 +194,9 @@
 
 @push('scripts')
     <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
         function setType(type) {
             document.getElementById('type-input').value = type;
 

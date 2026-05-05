@@ -8,8 +8,8 @@
         <h1 class="page-title">Target Keuangan</h1>
         <p class="page-subtitle">Wujudkan impianmu dengan menabung secara teratur</p>
     </div>
-    <button onclick="document.getElementById('add-goal-form').style.display = 'block'" class="btn btn-primary">
-        ＋ Buat Target Baru
+    <button onclick="document.getElementById('add-goal-form').style.display = 'block'" class="btn btn-primary" style="display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="plus-circle" style="width: 18px; height: 18px;"></i> Buat Target Baru
     </button>
 </div>
 
@@ -17,7 +17,9 @@
 <div id="add-goal-form" class="card" style="display: none; margin-bottom: 24px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="margin: 0;">Buat Target Keuangan</h3>
-        <button onclick="document.getElementById('add-goal-form').style.display = 'none'" class="btn btn-ghost btn-sm">×</button>
+        <button onclick="document.getElementById('add-goal-form').style.display = 'none'" class="btn btn-ghost btn-sm">
+            <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+        </button>
     </div>
     <form action="{{ route('goals.store') }}" method="POST">
         @csrf
@@ -35,7 +37,9 @@
             <label class="form-label">Catatan (Opsional)</label>
             <textarea name="note" class="form-control" rows="2"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Simpan Target</button>
+        <button type="submit" class="btn btn-primary" style="display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="save" style="width: 16px; height: 16px;"></i> Simpan Target
+        </button>
     </form>
 </div>
 
@@ -43,7 +47,9 @@
     @forelse($goals as $goal)
         <div class="card" style="position: relative; {{ $goal->status == 'completed' ? 'border: 1px solid var(--income);' : '' }}">
             @if($goal->status == 'completed')
-                <div style="position: absolute; top: 12px; right: 12px;" class="badge badge-income">✨ Tercapai</div>
+                <div style="position: absolute; top: 12px; right: 12px;" class="badge badge-income">
+                    <i data-lucide="sparkles" style="width: 12px; height: 12px; margin-right: 4px;"></i> Tercapai
+                </div>
             @endif
 
             <h3 style="margin-top: 0; margin-bottom: 4px; font-size: 18px;">{{ $goal->name }}</h3>
@@ -68,13 +74,15 @@
                 
                 <div style="display: flex; gap: 8px;">
                     @if($goal->status == 'active')
-                        <button onclick="showDepositForm({{ $goal->id }})" class="btn btn-income btn-sm">
-                            💰 Tabung
+                        <button onclick="showDepositForm({{ $goal->id }})" class="btn btn-income btn-sm" style="display: flex; align-items: center; gap: 6px;">
+                            <i data-lucide="wallet" style="width: 13px; height: 13px;"></i> Tabung
                         </button>
                     @endif
                     <form action="{{ route('goals.destroy', $goal) }}" method="POST" onsubmit="return confirm('Hapus target ini?')">
                         @csrf @method('DELETE')
-                        <button type="submit" class="btn btn-ghost btn-sm" style="color: var(--expense);">Hapus</button>
+                        <button type="submit" class="btn btn-ghost btn-sm" style="color: var(--expense); display: flex; align-items: center; gap: 6px;">
+                            <i data-lucide="trash-2" style="width: 13px; height: 13px;"></i> Hapus
+                        </button>
                     </form>
                 </div>
             </div>
@@ -102,6 +110,9 @@
 
 @push('scripts')
 <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
     function showDepositForm(id) {
         // Sembunyikan form deposit lain jika ada
         document.querySelectorAll('[id^="deposit-form-"]').forEach(el => el.style.display = 'none');

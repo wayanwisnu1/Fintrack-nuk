@@ -11,20 +11,22 @@
         <div style="display: flex; gap: 8px;">
             {{-- Tombol Export --}}
             <div style="display: flex; gap: 4px; border: 1px solid var(--border); padding: 4px; border-radius: 8px;">
-                <a href="{{ route('transactions.export.excel') }}" class="btn btn-ghost btn-sm" title="Export ke Excel">
-                    📊 Excel
+                <a href="{{ route('transactions.export.excel') }}" class="btn btn-ghost btn-sm" title="Export ke Excel" style="display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="file-spreadsheet" style="width: 14px; height: 14px; color: #22d47c;"></i> Excel
                 </a>
-                <a href="{{ route('transactions.export.pdf') }}" class="btn btn-ghost btn-sm" title="Export ke PDF">
-                    📄 PDF
+                <a href="{{ route('transactions.export.pdf') }}" class="btn btn-ghost btn-sm" title="Export ke PDF" style="display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="file-text" style="width: 14px; height: 14px; color: #ff5757;"></i> PDF
                 </a>
             </div>
             
             {{-- Tombol Import (Trigger Modal/Collapse) --}}
-            <button onclick="document.getElementById('import-form-container').style.display = 'block'" class="btn btn-ghost btn-sm">
-                📥 Import
+            <button onclick="document.getElementById('import-form-container').style.display = 'block'" class="btn btn-ghost btn-sm" style="display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="download" style="width: 14px; height: 14px;"></i> Import
             </button>
 
-            <a href="{{ route('transactions.create') }}" class="btn btn-primary">＋ Tambah</a>
+            <a href="{{ route('transactions.create') }}" class="btn btn-primary">
+                <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Tambah
+            </a>
         </div>
     </div>
 
@@ -126,16 +128,16 @@
         @if (request()->hasAny(['type', 'date', 'month', 'year', 'category']))
             <div
                 style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap;">
-                <div style="font-size: 12px; color: var(--muted);">
+                <div style="font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px;">
                     Hasil filter:
-                    <span style="color: var(--income); font-weight: 600; margin-left: 6px;">
-                        ↑ Rp {{ number_format($filteredIncome, 0, ',', '.') }}
+                    <span style="color: var(--income); font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="arrow-up" style="width: 12px; height: 12px;"></i> Rp {{ number_format($filteredIncome, 0, ',', '.') }}
                     </span>
-                    <span style="color: var(--expense); font-weight: 600; margin-left: 12px;">
-                        ↓ Rp {{ number_format($filteredExpense, 0, ',', '.') }}
+                    <span style="color: var(--expense); font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="arrow-down" style="width: 12px; height: 12px;"></i> Rp {{ number_format($filteredExpense, 0, ',', '.') }}
                     </span>
-                    <span style="color: var(--text); font-weight: 600; margin-left: 12px;">
-                        = Rp {{ number_format($filteredIncome - $filteredExpense, 0, ',', '.') }}
+                    <span style="color: var(--text); font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="equals" style="width: 12px; height: 12px;"></i> Rp {{ number_format($filteredIncome - $filteredExpense, 0, ',', '.') }}
                     </span>
                 </div>
             </div>
@@ -146,18 +148,11 @@
     <div class="card">
         @if ($transactions->isEmpty())
             <div style="text-align:center; padding: 48px; color: var(--muted);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                    style="margin: 0 auto 16px; display:block; opacity:0.3">
-                    <path d="M22 12H2" />
-                    <path
-                        d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z" />
-                    <line x1="6" y1="16" x2="6.01" y2="16" />
-                    <line x1="10" y1="16" x2="10.01" y2="16" />
-                </svg>
+                <i data-lucide="box" style="width: 40px; height: 40px; margin: 0 auto 16px; display:block; opacity:0.3; stroke-width: 1.5;"></i>
                 <div style="font-size: 16px; font-weight: 500; margin-bottom: 8px;">Tidak ada transaksi</div>
-                <a href="{{ route('transactions.create') }}" class="btn btn-primary" style="margin-top: 12px;">Tambah
-                    Transaksi</a>
+                <a href="{{ route('transactions.create') }}" class="btn btn-primary" style="margin-top: 12px;">
+                    <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Tambah Transaksi
+                </a>
             </div>
         @else
             <div class="table-wrap">
@@ -186,7 +181,11 @@
                                 <td style="color: var(--muted); font-size: 13px;">{{ $t->date->format('d M Y') }}</td>
                                 <td>
                                     <span class="badge badge-{{ $t->type }}">
-                                        {{ $t->type === 'income' ? '↑ Pemasukan' : '↓ Pengeluaran' }}
+                                        @if($t->type === 'income')
+                                            <i data-lucide="arrow-up-circle" style="width: 12px; height: 12px; margin-right: 4px;"></i> Pemasukan
+                                        @else
+                                            <i data-lucide="arrow-down-circle" style="width: 12px; height: 12px; margin-right: 4px;"></i> Pengeluaran
+                                        @endif
                                     </span>
                                 </td>
                                 <td style="text-align:right;" class="amount-{{ $t->type }}">
@@ -196,26 +195,13 @@
                                     <div style="display: flex; gap: 6px; justify-content: center;">
                                         <a href="{{ route('transactions.edit', $t) }}" class="btn btn-ghost btn-sm"
                                             title="Edit">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                            </svg>
+                                            <i data-lucide="edit-3" style="width: 13px; height: 13px;"></i>
                                         </a>
                                         <form method="POST" action="{{ route('transactions.destroy', $t) }}"
                                             onsubmit="return confirm('Hapus transaksi ini?')">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                    <polyline points="3 6 5 6 21 6" />
-                                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                                                    <path d="M10 11v6" />
-                                                    <path d="M14 11v6" />
-                                                    <path d="M9 6V4h6v2" />
-                                                </svg>
+                                                <i data-lucide="trash-2" style="width: 13px; height: 13px;"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -237,6 +223,9 @@
 
     @push('scripts')
         <script>
+            // Initialize Lucide icons
+            lucide.createIcons();
+
             const modes = ['month', 'date', 'year'];
 
             function setFilterMode(mode) {
