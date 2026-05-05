@@ -52,10 +52,12 @@
             <div style="font-size: 12px; color: var(--muted); margin-top: 6px;">Bulan ini: Rp
                 {{ number_format($monthExpense, 0, ',', '.') }}</div>
         </div>
-        </div>
+    </div>
 
-        <!-- Charts -->
-        <div class="grid-2" style="margin-bottom: 24px;">
+    @include('components.forecasting-card')
+
+    <!-- Charts -->
+    <div class="grid-2" style="margin-bottom: 24px;">
         <!-- Bar Chart -->
         <div class="card">
             <div style="font-family: var(--font-head); font-size: 16px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
